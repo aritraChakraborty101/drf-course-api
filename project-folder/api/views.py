@@ -1,8 +1,10 @@
-from api.serializers import ProductSerializer, OrderSerializer, OrderItemSerializer
+from api.serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, ProductInfoSerializer
 from api.models import Product, Order, OrderItem
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.db import models
+
 
 
 
@@ -29,4 +31,15 @@ def order_list(request):
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     serializer = ProductSerializer(product)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def product_info(request):
+    products = Product.objects.all()
+    serializer = ProductInfoSerializer({
+        'products': products,
+        'count': len(products),
+        'max_price': products.aggregate(models.Max('price'))['price__max'] or 0,
+    })
     return Response(serializer.data)
