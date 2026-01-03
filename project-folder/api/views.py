@@ -10,7 +10,7 @@ from rest_framework import generics
 
 
 class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.filter(stock__gt=0)
     serializer_class = ProductSerializer
 
 
@@ -22,17 +22,6 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 class OrderListAPIView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-
-
-# @api_view(['GET'])
-# def product_info(request):
-#     products = Product.objects.all()
-#     serializer = ProductInfoSerializer({
-#         'products': products,
-#         'count': len(products),
-#         'max_price': products.aggregate(models.Max('price'))['price__max'] or 0,
-#     })
-#     return Response(serializer.data)
 
 class ProductInfoAPIView(generics.GenericAPIView):
     serializer_class = ProductInfoSerializer
